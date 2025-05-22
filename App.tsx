@@ -15,13 +15,13 @@ const formatStake = (stake: number): string => {
 const VoteOptionDisplay: React.FC<{ vote: VoteOption }> = ({ vote }) => {
   switch (vote) {
     case VoteOption.YES:
-      return <span className="flex items-center text-success"><CheckCircleIcon className="w-5 h-5 mr-1" /> Yes</span>;
+      return <span className="flex items-center text-green-500"><CheckCircleIcon className="w-5 h-5 mr-1" /> Yes</span>;
     case VoteOption.NO:
-      return <span className="flex items-center text-error"><XCircleIcon className="w-5 h-5 mr-1" /> No</span>;
+      return <span className="flex items-center text-red-500"><XCircleIcon className="w-5 h-5 mr-1" /> No</span>;
     case VoteOption.ABSTAIN:
-      return <span className="flex items-center text-warning"><MinusCircleIcon className="w-5 h-5 mr-1" /> Abstain</span>;
+      return <span className="flex items-center text-amber-500"><MinusCircleIcon className="w-5 h-5 mr-1" /> Abstain</span>;
     default:
-      return <span className="text-neutral">{vote}</span>;
+      return <span className="text-gray-400">{vote}</span>;
   }
 };
 
@@ -118,9 +118,9 @@ const App: React.FC = () => {
   const getOverallConsensusData = (proposal: Proposal | null): ChartDataPoint[] => {
     if (!proposal) return [];
     return [
-      { name: VoteOption.YES, value: proposal.totalYesStake || 0, fill: 'rgb(34 197 94)' },
-      { name: VoteOption.NO, value: proposal.totalNoStake || 0, fill: 'rgb(239 68 68)' },
-      { name: VoteOption.ABSTAIN, value: proposal.totalAbstainStake || 0, fill: 'rgb(245 158 11)' },
+      { name: VoteOption.YES, value: proposal.totalYesStake || 0, fill: 'rgb(34 197 94)' }, // green-500
+      { name: VoteOption.NO, value: proposal.totalNoStake || 0, fill: 'rgb(239 68 68)' },   // red-500
+      { name: VoteOption.ABSTAIN, value: proposal.totalAbstainStake || 0, fill: 'rgb(245 158 11)' }, // amber-500
     ];
   };
   
@@ -148,13 +148,13 @@ const App: React.FC = () => {
 
 
   if (isLoading && !selectedProposal && proposals.length === 0) { // Initial full page load
-    return <div className="flex justify-center items-center h-screen text-xl">Loading Solana Consensus Data...</div>;
+    return <div className="flex justify-center items-center h-screen text-xl text-gray-300">Loading Solana Consensus Data...</div>;
   }
 
   return (
-    <div className="min-h-screen bg-base-100 text-gray-100 p-4 md:p-8">
+    <div className="min-h-screen bg-gray-900 text-gray-100 p-4 md:p-8">
       <header className="mb-8 flex flex-col md:flex-row justify-between items-center">
-        <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-solana-green to-solana-purple">
+        <h1 className="text-3xl md:text-4xl font-bold" style={{ background: 'linear-gradient(to right, #34d399, #8b5cf6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
           Solana Consensus Viewer
         </h1>
         {connectedDelegator ? (
@@ -162,7 +162,7 @@ const App: React.FC = () => {
             <img 
               src={`https://picsum.photos/seed/${connectedDelegator.id}/32/32`} 
               alt={connectedDelegator.name} 
-              className="w-8 h-8 rounded-full mr-2 border-2 border-solana-green"
+              className="w-8 h-8 rounded-full mr-2 border-2 border-green-500"
             />
             <span className="mr-4 text-sm">{connectedDelegator.name} ({formatStake(connectedDelegator.stakeAmount)})</span>
             <button 
@@ -175,7 +175,7 @@ const App: React.FC = () => {
         ) : (
           <button 
             onClick={handleConnectWallet}
-            className="mt-4 md:mt-0 px-4 py-2 bg-primary hover:bg-green-700 text-white rounded-lg flex items-center transition-colors"
+            className="mt-4 md:mt-0 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg flex items-center transition-colors"
           >
             <WalletIcon className="w-5 h-5 mr-2" /> Connect Wallet (Simulated)
           </button>
@@ -184,21 +184,21 @@ const App: React.FC = () => {
 
       {selectedProposal ? (
         // Proposal Detail View
-        <div className="bg-base-200 p-6 rounded-lg shadow-xl">
+        <div className="bg-gray-800 p-6 rounded-lg shadow-xl">
           <button 
             onClick={handleBackToProposals}
-            className="mb-6 px-4 py-2 bg-secondary hover:bg-blue-700 text-white rounded-lg flex items-center transition-colors text-sm"
+            className="mb-6 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center transition-colors text-sm"
           >
             <ChevronLeftIcon className="w-5 h-5 mr-1" /> Back to Proposals
           </button>
-          <h2 className="text-2xl font-semibold mb-2 text-solana-green">{selectedProposal.title}</h2>
+          <h2 className="text-2xl font-semibold mb-2 text-green-400">{selectedProposal.title}</h2>
           <p className="text-sm text-gray-400 mb-1">Status: <span className={`font-semibold ${selectedProposal.status === 'Active' ? 'text-green-400' : 'text-red-400'}`}>{selectedProposal.status}</span></p>
           <p className="text-sm text-gray-400 mb-4">Created: {new Date(selectedProposal.creationDate).toLocaleDateString()}</p>
           <p className="text-gray-300 mb-6">{selectedProposal.description}</p>
 
           <div className="mb-8">
-            <h3 className="text-xl font-semibold mb-3 text-solana-purple">Overall Validator Consensus (by Stake)</h3>
-            {isLoading && validatorVotes.length === 0 ? <p>Loading consensus data...</p> : 
+            <h3 className="text-xl font-semibold mb-3 text-purple-400">Overall Validator Consensus (by Stake)</h3>
+            {isLoading && validatorVotes.length === 0 ? <p className="text-gray-400">Loading consensus data...</p> : 
             getOverallConsensusData(selectedProposal).reduce((sum, item) => sum + item.value, 0) > 0 ?
              <SimpleBarChart data={getOverallConsensusData(selectedProposal)} barKey="value" xAxisKey="name" height={250} />
              : <p className="text-gray-400">No validator votes recorded yet for this proposal.</p>
@@ -206,8 +206,8 @@ const App: React.FC = () => {
           </div>
 
           {connectedDelegator && selectedProposal.status === 'Active' && (
-            <div className="mb-8 p-4 bg-base-300 rounded-lg">
-              <h3 className="text-lg font-semibold mb-3 text-solana-green">Your Vote Suggestion (as {connectedDelegator.name})</h3>
+            <div className="mb-8 p-4 bg-gray-700 rounded-lg">
+              <h3 className="text-lg font-semibold mb-3 text-green-400">Your Vote Suggestion (as {connectedDelegator.name})</h3>
               <p className="text-sm text-gray-400 mb-3">
                 You are delegating to: {validators.find(v => v.id === connectedDelegator.delegatedToValidatorId)?.name || 'Unknown Validator'}. 
                 Your stake: {formatStake(connectedDelegator.stakeAmount)}.
@@ -223,9 +223,9 @@ const App: React.FC = () => {
                       disabled={isLoading}
                       className={`px-4 py-2 rounded-lg transition-all text-sm font-medium
                         ${isCurrentVote 
-                          ? (option === VoteOption.YES ? 'bg-success text-white ring-2 ring-offset-2 ring-offset-base-300 ring-green-300' 
-                            : option === VoteOption.NO ? 'bg-error text-white ring-2 ring-offset-2 ring-offset-base-300 ring-red-300' 
-                            : 'bg-warning text-gray-800 ring-2 ring-offset-2 ring-offset-base-300 ring-amber-300')
+                          ? (option === VoteOption.YES ? 'bg-green-500 text-white ring-2 ring-offset-2 ring-offset-gray-700 ring-green-300' 
+                            : option === VoteOption.NO ? 'bg-red-500 text-white ring-2 ring-offset-2 ring-offset-gray-700 ring-red-300' 
+                            : 'bg-amber-500 text-gray-800 ring-2 ring-offset-2 ring-offset-gray-700 ring-amber-300')
                           : 'bg-gray-600 hover:bg-gray-500 text-white'}
                         ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
@@ -239,8 +239,8 @@ const App: React.FC = () => {
           )}
           
           <div>
-            <h3 className="text-xl font-semibold mb-4 text-solana-purple">Validator Votes & Delegator Suggestions</h3>
-            {isLoading && validatorVotes.length === 0 ? <p>Loading validator votes...</p> :
+            <h3 className="text-xl font-semibold mb-4 text-purple-400">Validator Votes & Delegator Suggestions</h3>
+            {isLoading && validatorVotes.length === 0 ? <p className="text-gray-400">Loading validator votes...</p> :
             validatorVotes.length > 0 ? (
               <div className="space-y-6">
                 {validatorVotes.map(vote => {
@@ -250,7 +250,7 @@ const App: React.FC = () => {
                   const totalDelegatorSuggestionStake = delegatorSuggestionData.reduce((sum, item) => sum + item.value, 0);
 
                   return (
-                    <div key={validator.id} className="p-4 bg-base-300 rounded-lg shadow">
+                    <div key={validator.id} className="p-4 bg-gray-700 rounded-lg shadow">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center">
                           <img src={validator.avatarUrl || `https://picsum.photos/seed/${validator.id}/32/32`} alt={validator.name} className="w-8 h-8 rounded-full mr-3 border border-gray-500" />
@@ -265,9 +265,9 @@ const App: React.FC = () => {
                         </div>
                       </div>
                       
-                      <div className="mt-3 pt-3 border-t border-gray-700">
+                      <div className="mt-3 pt-3 border-t border-gray-600">
                         <h4 className="text-sm font-medium text-gray-300 mb-2 flex items-center">
-                          <UsersIcon className="w-4 h-4 mr-1 text-solana-green"/> Delegator Suggestions for {validator.name}
+                          <UsersIcon className="w-4 h-4 mr-1 text-green-400"/> Delegator Suggestions for {validator.name}
                         </h4>
                         {totalDelegatorSuggestionStake > 0 ? (
                           <SimpleBarChart 
@@ -295,26 +295,26 @@ const App: React.FC = () => {
           {proposals.map(proposal => (
             <div 
               key={proposal.id} 
-              className="bg-base-200 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer transform hover:-translate-y-1"
+              className="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer transform hover:-translate-y-1"
               onClick={() => handleSelectProposal(proposal)}
             >
-              <h3 className="text-xl font-semibold mb-2 text-solana-green">{proposal.title}</h3>
+              <h3 className="text-xl font-semibold mb-2 text-green-400">{proposal.title}</h3>
               <p className="text-sm text-gray-400 mb-1">Status: <span className={`font-semibold ${proposal.status === 'Active' ? 'text-green-400' : 'text-red-400'}`}>{proposal.status}</span></p>
               <p className="text-sm text-gray-400 mb-3">Created: {new Date(proposal.creationDate).toLocaleDateString()}</p>
               <p className="text-gray-300 text-sm line-clamp-3 mb-4">{proposal.description}</p>
               <div className="mt-auto pt-3 border-t border-gray-700">
                 <p className="text-xs text-gray-500">Validator Consensus (Stake):</p>
                 <div className="flex justify-between text-xs mt-1">
-                    <span className="text-success">Yes: {formatStake(proposal.totalYesStake || 0)}</span>
-                    <span className="text-error">No: {formatStake(proposal.totalNoStake || 0)}</span>
-                    <span className="text-warning">Abstain: {formatStake(proposal.totalAbstainStake || 0)}</span>
+                    <span className="text-green-500">Yes: {formatStake(proposal.totalYesStake || 0)}</span>
+                    <span className="text-red-500">No: {formatStake(proposal.totalNoStake || 0)}</span>
+                    <span className="text-amber-500">Abstain: {formatStake(proposal.totalAbstainStake || 0)}</span>
                 </div>
               </div>
             </div>
           ))}
         </div>
       )}
-      <footer className="text-center mt-12 py-4 border-t border-base-300">
+      <footer className="text-center mt-12 py-4 border-t border-gray-700">
         <p className="text-sm text-gray-500">&copy; {new Date().getFullYear()} Solana Consensus Viewer. For demonstration purposes only.</p>
       </footer>
     </div>
@@ -322,4 +322,3 @@ const App: React.FC = () => {
 };
 
 export default App;
-    
