@@ -1,13 +1,13 @@
 
-import { Proposal, Validator, ValidatorVote, Delegator, DelegatorSuggestion, VoteOption } from '../types';
+import { VoteOption } from '../types.js'; // Updated import
 
-const MOCK_PROPOSALS: Proposal[] = [
+const MOCK_PROPOSALS = [
   { id: 'prop1', title: 'Upgrade Network Protocol to v1.5', description: 'This proposal aims to upgrade the Solana network protocol to version 1.5, introducing new features for enhanced scalability and security. Key changes include improved transaction processing and reduced latency.', status: 'Active', creationDate: '2024-07-01T10:00:00Z' },
   { id: 'prop2', title: 'Allocate Treasury Funds for Ecosystem Grants', description: 'Proposal to allocate 5 million SOL from the treasury for grants to projects building on Solana. The grants will focus on DeFi, NFTs, and infrastructure development.', status: 'Active', creationDate: '2024-07-15T14:30:00Z' },
   { id: 'prop3', title: 'Implement New Staking Reward Mechanism', description: 'This proposal suggests a revised staking reward mechanism to better incentivize long-term stakers and network security. It includes adjustments to inflation rates and reward distribution.', status: 'Closed', creationDate: '2024-06-01T09:00:00Z' },
 ];
 
-const MOCK_VALIDATORS: Validator[] = [
+const MOCK_VALIDATORS = [
   { id: 'val1', name: 'Certus One', totalStake: 1500000, avatarUrl: 'https://picsum.photos/seed/val1/40/40' },
   { id: 'val2', name: 'Chorus One', totalStake: 1200000, avatarUrl: 'https://picsum.photos/seed/val2/40/40' },
   { id: 'val3', name: 'Everstake', totalStake: 1800000, avatarUrl: 'https://picsum.photos/seed/val3/40/40' },
@@ -15,7 +15,7 @@ const MOCK_VALIDATORS: Validator[] = [
   { id: 'val5', name: 'P2P.org', totalStake: 2000000, avatarUrl: 'https://picsum.photos/seed/val5/40/40' },
 ];
 
-const MOCK_VALIDATOR_VOTES: ValidatorVote[] = [
+const MOCK_VALIDATOR_VOTES = [
   // Prop1
   { proposalId: 'prop1', validatorId: 'val1', vote: VoteOption.YES },
   { proposalId: 'prop1', validatorId: 'val2', vote: VoteOption.YES },
@@ -36,7 +36,7 @@ const MOCK_VALIDATOR_VOTES: ValidatorVote[] = [
   { proposalId: 'prop3', validatorId: 'val5', vote: VoteOption.YES },
 ];
 
-const MOCK_DELEGATORS: Delegator[] = [
+const MOCK_DELEGATORS = [
   { id: 'delegator1_wallet_address_xxxxxxxxxxxx', name: 'Alice (High Stake)', stakeAmount: 100000, delegatedToValidatorId: 'val1' },
   { id: 'delegator2_wallet_address_yyyyyyyyyyyy', name: 'Bob (Med Stake)', stakeAmount: 50000, delegatedToValidatorId: 'val1' },
   { id: 'delegator3_wallet_address_zzzzzzzzzzzz', name: 'Carol (Low Stake)', stakeAmount: 10000, delegatedToValidatorId: 'val2' },
@@ -45,18 +45,18 @@ const MOCK_DELEGATORS: Delegator[] = [
 ];
 
 // In-memory store for delegator suggestions, starts empty
-let MOCK_DELEGATOR_SUGGESTIONS: DelegatorSuggestion[] = [
+let MOCK_DELEGATOR_SUGGESTIONS = [
     { proposalId: 'prop1', delegatorId: 'delegator1_wallet_address_xxxxxxxxxxxx', validatorId: 'val1', vote: VoteOption.YES, stakeWeight: 100000 },
     { proposalId: 'prop1', delegatorId: 'delegator2_wallet_address_yyyyyyyyyyyy', validatorId: 'val1', vote: VoteOption.NO, stakeWeight: 50000 },
 ];
 
 
 // Simulate API delay
-const delay = <T,>(data: T, ms: number = 300): Promise<T> => 
+const delay = (data, ms = 300) => 
   new Promise(resolve => setTimeout(() => resolve(data), ms));
 
 export const solanaService = {
-  getProposals: async (): Promise<Proposal[]> => {
+  getProposals: async () => {
     return delay(MOCK_PROPOSALS.map(p => {
       const votes = MOCK_VALIDATOR_VOTES.filter(v => v.proposalId === p.id);
       const validators = MOCK_VALIDATORS;
@@ -75,7 +75,7 @@ export const solanaService = {
       return { ...p, totalYesStake, totalNoStake, totalAbstainStake };
     }));
   },
-  getProposalById: async (id: string): Promise<Proposal | undefined> => {
+  getProposalById: async (id) => {
      const proposal = MOCK_PROPOSALS.find(p => p.id === id);
      if (!proposal) return delay(undefined);
 
@@ -95,33 +95,32 @@ export const solanaService = {
      });
      return delay({ ...proposal, totalYesStake, totalNoStake, totalAbstainStake });
   },
-  getValidators: async (): Promise<Validator[]> => delay(MOCK_VALIDATORS),
-  getValidatorVotesForProposal: async (proposalId: string): Promise<ValidatorVote[]> => 
+  getValidators: async () => delay(MOCK_VALIDATORS),
+  getValidatorVotesForProposal: async (proposalId) => 
     delay(MOCK_VALIDATOR_VOTES.filter(v => v.proposalId === proposalId)),
   
-  getDelegators: async (): Promise<Delegator[]> => delay(MOCK_DELEGATORS),
+  getDelegators: async () => delay(MOCK_DELEGATORS),
   
-  getDelegatorById: async (id: string): Promise<Delegator | undefined> =>
+  getDelegatorById: async (id) =>
     delay(MOCK_DELEGATORS.find(d => d.id === id)),
 
-  getDelegatorSuggestionsForProposal: async (proposalId: string): Promise<DelegatorSuggestion[]> =>
+  getDelegatorSuggestionsForProposal: async (proposalId) =>
     delay(MOCK_DELEGATOR_SUGGESTIONS.filter(s => s.proposalId === proposalId)),
   
   castDelegatorSuggestion: async (
-    proposalId: string, 
-    delegatorId: string, 
-    validatorId: string,
-    vote: VoteOption, 
-    stakeWeight: number
-  ): Promise<DelegatorSuggestion> => {
+    proposalId, 
+    delegatorId, 
+    validatorId,
+    vote, 
+    stakeWeight
+  ) => {
     // Remove previous suggestion from this delegator for this proposal
     MOCK_DELEGATOR_SUGGESTIONS = MOCK_DELEGATOR_SUGGESTIONS.filter(
       s => !(s.proposalId === proposalId && s.delegatorId === delegatorId)
     );
     
-    const newSuggestion: DelegatorSuggestion = { proposalId, delegatorId, validatorId, vote, stakeWeight };
+    const newSuggestion = { proposalId, delegatorId, validatorId, vote, stakeWeight };
     MOCK_DELEGATOR_SUGGESTIONS.push(newSuggestion);
     return delay(newSuggestion);
   },
 };
-    

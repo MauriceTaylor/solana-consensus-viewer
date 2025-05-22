@@ -1,19 +1,9 @@
 
 import React from 'react';
 import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { ChartDataPoint } from '../types';
+// import { ChartDataPoint } from '../types.js'; // Types are commented out in types.js for now
 
-interface SimpleBarChartProps {
-  data: ChartDataPoint[];
-  barKey: string;
-  xAxisKey: string;
-  height?: number;
-  showLegend?: boolean;
-  showTooltip?: boolean;
-  layout?: 'horizontal' | 'vertical';
-}
-
-const SimpleBarChart: React.FC<SimpleBarChartProps> = ({ 
+const SimpleBarChart = ({ 
   data, 
   barKey, 
   xAxisKey, 
@@ -23,7 +13,8 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   layout = 'horizontal'
 }) => {
   if (!RechartsBarChart) { // Check if Recharts is loaded
-    return <div className="text-red-500">Recharts library not loaded. Chart cannot be displayed.</div>;
+    // Using basic class for error message, as Tailwind classes might not be available or processed
+    return <div style={{color: 'red', padding: '1em', border: '1px solid red'}}>Recharts library not loaded. Chart cannot be displayed.</div>;
   }
   return (
     <ResponsiveContainer width="100%" height={height}>
@@ -44,7 +35,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
             contentStyle={{ backgroundColor: 'rgb(31 41 55)', border: '1px solid rgb(55 65 81)', borderRadius: '0.25rem' }} 
             labelStyle={{ color: '#e5e7eb' }}
             itemStyle={{ color: '#e5e7eb' }}
-            formatter={(value: number) => [`${value.toLocaleString()} SOL`, 'Stake']}
+            formatter={(value) => [`${Number(value).toLocaleString()} SOL`, 'Stake']}
         />}
         {showLegend && <Legend wrapperStyle={{ color: '#e5e7eb' }} />}
         <Bar dataKey={barKey} name="Stake" /> 
@@ -54,4 +45,3 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
 };
 
 export default SimpleBarChart;
-    

@@ -1,49 +1,49 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Proposal, Validator, ValidatorVote, Delegator, DelegatorSuggestion, VoteOption, ChartDataPoint } from './types';
-import { solanaService } from './services/solanaService';
-import SimpleBarChart from './components/SimpleBarChart';
-import { WalletIcon, CheckCircleIcon, XCircleIcon, MinusCircleIcon, ChevronLeftIcon, UsersIcon } from './components/icons';
+import { VoteOption, ChartDataPoint } from './types.js'; // Updated import
+import { solanaService } from './services/solanaService.js'; // Updated import
+import SimpleBarChart from './components/SimpleBarChart.js'; // Updated import
+import { WalletIcon, CheckCircleIcon, XCircleIcon, MinusCircleIcon, ChevronLeftIcon, UsersIcon } from './components/icons.js'; // Updated import
 
 // Helper to format stake
-const formatStake = (stake: number): string => {
+const formatStake = (stake) => {
   if (stake >= 1_000_000) return `${(stake / 1_000_000).toFixed(2)}M SOL`;
   if (stake >= 1_000) return `${(stake / 1_000).toFixed(1)}K SOL`;
   return `${stake} SOL`;
 };
 
-const VoteOptionDisplay: React.FC<{ vote: VoteOption }> = ({ vote }) => {
-  const voteStyle: React.CSSProperties = { display: 'flex', alignItems: 'center' };
+const VoteOptionDisplay = ({ vote }) => {
+  const voteStyle = { display: 'flex', alignItems: 'center' };
   let color = '#9ca3af'; // default gray-400
-  let Icon = MinusCircleIcon;
+  let IconComponent = MinusCircleIcon; // Renamed to avoid conflict
 
   switch (vote) {
     case VoteOption.YES:
       color = '#22c55e'; // green-500
-      Icon = CheckCircleIcon;
+      IconComponent = CheckCircleIcon;
       break;
     case VoteOption.NO:
       color = '#ef4444'; // red-500
-      Icon = XCircleIcon;
+      IconComponent = XCircleIcon;
       break;
     case VoteOption.ABSTAIN:
       color = '#f59e0b'; // amber-500
-      Icon = MinusCircleIcon;
+      IconComponent = MinusCircleIcon;
       break;
   }
-  return <span style={{...voteStyle, color}}><Icon className="w-5 h-5 mr-1" /> {vote}</span>;
+  return <span style={{...voteStyle, color}}><IconComponent className="w-5 h-5 mr-1" /> {vote}</span>;
 };
 
-const App: React.FC = () => {
-  const [proposals, setProposals] = useState<Proposal[]>([]);
-  const [validators, setValidators] = useState<Validator[]>([]);
-  const [validatorVotes, setValidatorVotes] = useState<ValidatorVote[]>([]);
-  const [delegators, setDelegators] = useState<Delegator[]>([]);
-  const [delegatorSuggestions, setDelegatorSuggestions] = useState<DelegatorSuggestion[]>([]);
+const App = () => {
+  const [proposals, setProposals] = useState([]);
+  const [validators, setValidators] = useState([]);
+  const [validatorVotes, setValidatorVotes] = useState([]);
+  const [delegators, setDelegators] = useState([]);
+  const [delegatorSuggestions, setDelegatorSuggestions] = useState([]);
   
-  const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(null);
-  const [connectedDelegator, setConnectedDelegator] = useState<Delegator | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [selectedProposal, setSelectedProposal] = useState(null);
+  const [connectedDelegator, setConnectedDelegator] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const mockDelegatorId = 'delegator1_wallet_address_xxxxxxxxxxxx';
 
@@ -99,7 +99,7 @@ const App: React.FC = () => {
     setConnectedDelegator(null);
   };
 
-  const handleSelectProposal = (proposal: Proposal) => {
+  const handleSelectProposal = (proposal) => {
     setSelectedProposal(proposal);
   };
 
@@ -107,7 +107,7 @@ const App: React.FC = () => {
     setSelectedProposal(null);
   };
 
-  const handleCastDelegatorVote = async (proposalId: string, vote: VoteOption) => {
+  const handleCastDelegatorVote = async (proposalId, vote) => {
     if (!connectedDelegator) return;
     setIsLoading(true);
     try {
@@ -127,7 +127,7 @@ const App: React.FC = () => {
     }
   };
 
-  const getOverallConsensusData = (proposal: Proposal | null): ChartDataPoint[] => {
+  const getOverallConsensusData = (proposal) => {
     if (!proposal) return [];
     return [
       { name: VoteOption.YES, value: proposal.totalYesStake || 0, fill: 'rgb(34 197 94)' },
@@ -136,7 +136,7 @@ const App: React.FC = () => {
     ];
   };
   
-  const getDelegatorSuggestionDataForValidator = (proposalId: string, validatorId: string): ChartDataPoint[] => {
+  const getDelegatorSuggestionDataForValidator = (proposalId, validatorId) => {
     const suggestionsForValidator = delegatorSuggestions.filter(
       s => s.proposalId === proposalId && s.validatorId === validatorId
     );
@@ -212,7 +212,7 @@ const App: React.FC = () => {
                 {[VoteOption.YES, VoteOption.NO, VoteOption.ABSTAIN].map(option => {
                   const existingSuggestion = delegatorSuggestions.find(s => s.delegatorId === connectedDelegator.id && s.proposalId === selectedProposal.id);
                   const isCurrentVote = existingSuggestion?.vote === option;
-                  let buttonStyle: React.CSSProperties = {};
+                  let buttonStyle = {};
                   if (isCurrentVote) {
                     if (option === VoteOption.YES) buttonStyle = {backgroundColor: '#22c55e', color: 'white', outline: '2px solid #86efac'};
                     else if (option === VoteOption.NO) buttonStyle = {backgroundColor: '#ef4444', color: 'white', outline: '2px solid #fca5a5'};
@@ -320,4 +320,3 @@ const App: React.FC = () => {
 };
 
 export default App;
-
