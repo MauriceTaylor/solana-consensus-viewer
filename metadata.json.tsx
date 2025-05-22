@@ -1,0 +1,6 @@
+{
+  "name": "Solana Consensus Viewer",
+  "description": "An application to display Solana validator consensus votes, individual validator votes, and allow delegators to suggest votes weighted by stake.",
+  "requestFramePermissions": []
+}
+    

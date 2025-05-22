@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-T" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Solana Consensus Viewer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'solana-green': '#00FFA3',
+              'solana-purple': '#9945FF',
+              'primary': 'rgb(22 163 74)', // Green 600
+              'secondary': 'rgb(37 99 235)', // Blue 600
+              'accent': 'rgb(219 39 119)', // Pink 600
+              'neutral': 'rgb(107 114 128)', // Gray 500
+              'base-100': 'rgb(17 24 39)', // Gray 900 (Dark Background)
+              'base-200': 'rgb(31 41 55)', // Gray 800
+              'base-300': 'rgb(55 65 81)', // Gray 700
+              'info': 'rgb(59 130 246)', // Blue 500
+              'success': 'rgb(34 197 94)', // Green 500
+              'warning': 'rgb(245 158 11)', // Amber 500
+              'error': 'rgb(239 68 68)', // Red 500
+            },
+          }
+        }
+      }
+    </script>
+    <!-- Recharts for charts -->
+    <script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.0",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "recharts": "https://esm.sh/recharts@^2.15.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/"
+  }
+}
+</script>
+</head>
+  <body class="bg-base-100 text-gray-100">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
+    
